@@ -1,0 +1,174 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <title>File History</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+
+
+    <!-- Favicons -->
+    <link href="{% static 'assets/img/favicon.png' %}" rel="icon">
+    <link href="{% static 'assets/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+          rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="{% static 'vendor/aos/aos.css' %}" rel="stylesheet">
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+    <link href="{% static 'vendor/boxicons/css/boxicons.min.css' %}" rel="stylesheet">
+    <link href="{% static 'vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
+    <link href="{% static 'vendor/remixicon/remixicon.css' %}" rel="stylesheet">
+    <link href="{% static 'vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
+
+    <!-- Template Main CSS File -->
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+
+</head>
+<style>
+
+    form button{
+
+        width: 100px;
+        color: #FFFF;
+        background-color: transparent;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        box-shadow: 0px 0px 10px #ffc451;
+    }
+    form button:hover{
+        color: #ffc451;
+        background-color: transparent;
+        border: 1px solid #ffc451;
+        border-radius: 8px;
+        box-shadow: 0px 0px 10px #ffc451;
+    }
+    form input{
+        background-color: transparent;
+    }
+</style>
+
+<body>
+
+<!-- ======= Header ======= -->
+<header id="header" class="fixed-top ">
+    <div class="container d-flex align-items-center justify-content-lg-between">
+
+        <h1 class="me-auto"><a href="#">File History<span>.</span></a></h1>
+        <!-- Uncomment below if you prefer to use an image logo -->
+        <!-- <a href="index.html" class="logo me-auto me-lg-0"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
+
+        <nav id="navbar" class="navbar order-last order-lg-0">
+            <ul>
+                <li>
+                    <button onclick="goBack()" class="nav-link scrollto active">Go Back</button>
+                </li>
+            </ul>
+            <i class="bi bi-list mobile-nav-toggle"></i>
+        </nav><!-- .navbar -->
+
+    </div>
+</header><!-- End Header -->
+
+<!-- ======= Hero Section ======= -->
+<section id="hero" class="d-flex align-items-center justify-content-center">
+    <div class="container" data-aos="fade-up" style="padding:0;">
+
+        <div class="row gy-4 mt-5 justify-content-center" data-aos="zoom-in" data-aos-delay="250"
+             style="padding:0;">
+            <div class="col-xl-2 col-md-4" style="Height:700px; width: 50%; ">
+                <div class="icon-box">
+                    <i class="ri-calendar-todo-line"></i>
+                    <h3><a href="{% url 'user_upload' %}">Words Weighted Files</a></h3>
+                    <div style=" height:570px; overflow-y:scroll;">
+                        {% for file_entry in user_files %}
+                        <li class="List" style="display:flex; justify-content:space-between; margin-top:12px;">
+                        <div style="width: 300px;">
+                            <a href="{% url 'file_details' file_entry.id %}" style="display:flex; margin-right:12px;">{{file_entry.file.name}}</a>
+                        </div>
+
+                        <div style="display:flex;">
+                            {% if file_entry.score_description == "Score Passed" %}
+                            <p style="color:#FFFFFF; margin-right: 12px;">Score: <span class="pass-score">{{ file_entry.overall_total }}</span>
+                            </p>
+                            {% else %}
+                            <p style="color:#FFFFFF; margin-right: 12px;">Score: <span class="failed-score">{{ file_entry.overall_total }}</span>
+                            </p>
+                            {% endif %}
+                            <form action="{% url 'delete_file' file_entry.id %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit">Delete</button>
+                            </form>
+                        </div>
+                    </li>
+                    {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-2 col-md-4" style="Height:700px;width: 50%;">
+                <div class="icon-box">
+                    <i class="ri-bar-chart-box-line"></i>
+                    <h3><a href="{% url 'user_files' %}">Sentiment Analysis Files</a></h3>
+
+                    <div style=" height:570px; overflow-y:scroll;">
+                        {% for uploaded_file in Sentiment_file %}
+                        <li class="List" style="display:flex; justify-content:space-between; margin-top:12px;">
+                            <div>
+                                <a href="{{ uploaded_file.document.url }}">{{ uploaded_file.document.name }}</a>
+                            </div>
+
+                            <div style="display:flex;" >
+                                <p style="color:#FFFFFF; margin-right: 12px;">Similarity Score: {{uploaded_file.similarity_score }}</p>
+                                <form action="{% url 'delete_uploaded_file' uploaded_file.id %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit">Delete</button>
+                                </form>
+                            </div>
+                        </li>
+                        {% endfor %}
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </div>
+</section><!-- End Hero -->
+<main id="main">
+
+</main><!-- End #main -->
+
+
+<div id="preloader"></div>
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+        class="bi bi-arrow-up-short"></i></a>
+
+<!-- Vendor JS Files -->
+<script src="{% static 'vendor/purecounter/purecounter_vanilla.js' %}"></script>
+<script src="{% static 'vendor/aos/aos.js' %}"></script>
+<script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'vendor/glightbox/js/glightbox.min.js'%}"></script>
+<script src="{% static 'vendor/isotope-layout/isotope.pkgd.min.js' %}"></script>
+<script src="{% static 'vendor/swiper/swiper-bundle.min.js' %}"></script>
+<script src="{% static 'vendor/php-email-form/validate.js' %}"></script>
+
+<!-- Template Main JS File -->
+<script src="{% static 'js/main.js' %}"></script>
+
+</body>
+
+</html>
+
+<script>
+    function goBack() {
+      window.history.back();
+    }
+</script>

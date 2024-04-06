@@ -1,0 +1,354 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <title>Internship Project</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+
+
+    <!-- Favicons -->
+    <link href="{% static 'assets/img/favicon.png' %}" rel="icon">
+    <link href="{% static 'assets/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+          rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="{% static 'vendor/aos/aos.css' %}" rel="stylesheet">
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+    <link href="{% static 'vendor/boxicons/css/boxicons.min.css' %}" rel="stylesheet">
+    <link href="{% static 'vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
+    <link href="{% static 'vendor/remixicon/remixicon.css' %}" rel="stylesheet">
+    <link href="{% static 'vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
+
+    <!-- Template Main CSS File -->
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+
+</head>
+
+<body>
+
+<!-- ======= Header ======= -->
+<header id="header" class="fixed-top ">
+    <div class="container d-flex align-items-center justify-content-lg-between">
+
+        <h1 class="me-auto "><a href="#">Keyword Scan<span>.</span></a></h1>
+        <!-- Uncomment below if you prefer to use an image logo -->
+        <!-- <a href="index.html" class="logo me-auto me-lg-0"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
+
+        <nav id="navbar" class="navbar order-last order-lg-0">
+            <ul>
+                <li>
+                    <button onclick="goBack()" class="nav-link scrollto active">Go Back</button>
+                </li>
+            </ul>
+            <i class="bi bi-list mobile-nav-toggle"></i>
+        </nav><!-- .navbar -->
+
+    </div>
+</header><!-- End Header -->
+
+<!-- ======= Hero Section ======= -->
+<section id="hero" class="d-flex align-items-center justify-content-center"
+         style="width: 100%; padding:0;">
+    <div class="container" data-aos="fade-up" style="padding:0; width: 100%; margin:0;">
+
+        <div class="row justify-content-center" data-aos="fade-up" data-aos-delay="150" style="padding:0; margin-top:12px; margin-bottom:-50px;">
+            <div class="col-xl-6 col-lg-8">
+                <h1>Scan result<span>.</span></h1>
+                <!-- h2>We are the ojt of the CET-IT Center</h2>-->
+            </div>
+        </div>
+
+        {% if request.user.is_authenticated %}
+        <div class="row gy-4 mt-5 justify-content-center" data-aos="zoom-in" data-aos-delay="250"
+             style="padding:0; margin-top: -500px;">
+            <!-- div class="col-xl-2 col-md-4" style="width:450px; height: 700px;">
+                <div class="icon-box">
+                    <i class="ri-store-line"></i>
+                    
+
+
+                </div>
+            </div>-->
+            <div class="col-xl-2 col-md-4" style="width:68%; height: 100; padding:0;">
+                <div class="icon-box">
+                    <i class="ri-calendar-todo-line"></i>
+                    <h3><a href="#">{{ file_name }}</a></h3>
+
+                    {% if preview_content %}
+                    <div class="preview" style="height: 550px; overflow-y:scroll; margin-top: 20px; color: #B3B6B7;">
+                        <div class="overplow">
+                            {{ preview_content|safe }}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                </div>
+            </div>
+            <div class="col-xl-2 col-md-4" style="width:28%; height: 700px; padding:0;">
+                <div class="icon-box" style="padding: 1.5%; margin:0; display: inline-block;">
+                    <!-- i class="ri-bar-chart-box-line"></i>-->
+                    <h6><a href="#">Keywords List</a></h6>
+                    <div class="table1">
+                        
+                        <table id="customers">
+                            <tr>
+                                <th>Keyword</th>
+                                <th>Score</th>
+                                <th>Date Added</th>
+                            </tr>
+                            {% for keyword in keywords %}
+                            <tr>
+                                <td style="background-color:{{ keyword.color_code }}; color: #000000;">{{ keyword.keywords }}
+                                </td>
+                                <td>{{ keyword.score }}</td>
+                                <td>{{ keyword.date_added }}</td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+
+                    <h6  style="margin-top:12px;"><a href="#">Summary of Scanned Keyword</a></h6>
+
+                    <div class="table2">
+                        <table id="customers">
+                            <tr>
+                                <th>Keyword</th>
+                                <th>Count</th>
+                                <th>Score</th>
+                                <th>Total</th>
+                            </tr>
+                            {% for keyword, data in keyword_count.items %}
+                            <tr>
+                                <td><a href="#{{ keyword }}">{{ keyword }}</a></td>
+                                <td>{{ data.count }}</td>
+                                <td>{{ data.score }}</td>
+                                <td>{{ data.total }}</td>
+                            </tr>
+                            {% endfor %}
+                            <tr>
+                                <th colspan="2">Overall Score:</th>
+                                <th colspan="2">{{ overall_total }}</th>
+                            </tr>
+                            <tr>
+                                {% for score in accept_scores %}
+                                <th colspan="2">Accepted Score:</th>
+                                <th colspan="2">{{ score.score }}</th>
+                                {% endfor %}
+                            </tr>
+                        </table>
+                    </div>
+                    <tr>
+                        {% if score_description == "Score Passed" %}
+                        <th colspan="4" class="pass-scores"><span style="color:white;">Remarks:</span>
+                            <span class="pass-score">{{ score_description }}</span>
+                        </th>
+                        {% else %}
+                        <th colspan="4" class="failed-scores"><span style="color:white;">Remarks:</span>
+                            <span class="failed-score">{{ score_description }}</span>
+                        </th>
+                        {% endif %}
+                    </tr>
+
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+    {% else %}
+    <div class="bg-img">
+        <img src="/templates/logo.png">
+    </div>
+
+    {% endif %}
+</section><!-- End Hero -->
+
+
+<div id="preloader"></div>
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+        class="bi bi-arrow-up-short"></i></a>
+
+<!-- Vendor JS Files -->
+<script src="{% static 'vendor/purecounter/purecounter_vanilla.js' %}"></script>
+<script src="{% static 'vendor/aos/aos.js' %}"></script>
+<script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'vendor/glightbox/js/glightbox.min.js'%}"></script>
+<script src="{% static 'vendor/isotope-layout/isotope.pkgd.min.js' %}"></script>
+<script src="{% static 'vendor/swiper/swiper-bundle.min.js' %}"></script>
+<script src="{% static 'vendor/php-email-form/validate.js' %}"></script>
+
+<!-- Template Main JS File -->
+<script src="{% static 'js/main.js' %}"></script>
+
+</body>
+</html>
+
+<style>
+.table1, .table2{
+    height: 300px;
+    overflow-y: scroll;
+}
+.table2 #customers{
+    cursor: pointer;
+}
+.table1 #customers{
+    cursor: no-drop;
+}
+#customers {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    width: 100%;
+}
+tr th h6 a{
+    padding:0;
+}
+table:hover, table #customers:hover {
+  border-radius: 8px;
+  box-shadow: 0px 0px 10px #ffc451;
+}
+
+#customers td, #customers th {
+  border: 1px solid #949494;
+  padding: 3px;
+  color: #D0D3D4;
+}
+
+#customers tr:nth-child(even){
+    background-color: transparent;
+}
+#customers tr:hover{
+    color: #7D6608;
+    border: 1px solid #ffc451;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px #ffc451;
+}
+#customers th {
+      padding-top: 6px;
+      padding-bottom: 6px;
+      text-align: center;
+      background-color: transparent; /*04AA6D*/
+      color:#FFF;
+      font-weight:10;
+}
+#customers td{
+    text-align: center;
+}
+.pass-score {
+    color: #52BE80; /* Green color for Pass score */
+    font-weight:700;
+    font-size: 14px;
+}
+.pass-scores:hover {
+    color: #52BE80; /* Green color for Pass score */
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px #52BE80;
+}
+.failed-score {
+    color: #E74C3C; /* Red color for Failed score */
+    font-weight:700;
+    font-size: 14px;
+}
+.failed-scores:hover {
+    color: #E74C3C; /* Red color for Failed score */
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px #E74C3C;
+}
+</style>
+<script>
+
+    function goBack() {
+      window.history.back();
+    }
+
+
+
+    // Retrieve keywords with color and ID from the database and store them in an object
+    var keywordData = [
+        {% for keyword in keywords %}
+            {
+                "name": "{{ keyword.keywords }}",
+                "color": "{{ keyword.color_code }}",
+                "id": "{{ keyword.keywords }}"
+            },
+        {% endfor %}
+    ];
+
+    // Function to highlight words in the preview content and add IDs
+    function highlightWordsWithIDs() {
+        var previewContent = document.querySelector('.overplow');
+        var content = previewContent.innerHTML;
+
+        // Loop through keywordData array
+        keywordData.forEach(function(keywordObj) {
+            // Create a regular expression to match the keyword globally and case insensitively
+            var regex = new RegExp('\\b(' + keywordObj.name + ')\\b', 'gi');
+            // Replace the keyword with highlighted version using the assigned color and ID
+            content = content.replace(regex, '<span class="highlight" style="background-color: ' + keywordObj.color + '" id="' + keywordObj.id + '">$1</span>');
+        });
+
+        // Update the preview content with highlighted words and IDs
+        previewContent.innerHTML = content;
+    }
+
+    // Call the highlightWordsWithIDs function when the document is ready
+    document.addEventListener("DOMContentLoaded", function(event) {
+        highlightWordsWithIDs();
+    });
+
+
+
+
+
+// Function to toggle bold styling and highlight the clicked keyword, and remove highlighting from other keywords
+function toggleBoldAndHighlight(keywordId) {
+    var keywords = document.querySelectorAll('.highlight');
+
+    keywords.forEach(function(keyword) {
+        if (keyword.id === keywordId) {
+            // Toggle bold styling
+            if (keyword.style.fontWeight === 'bold') {
+                keyword.style.fontWeight = 'normal';
+            } else {
+                keyword.style.fontWeight = 'bold';
+            }
+
+            // Toggle highlighting
+            if (keyword.style.backgroundColor === '') {
+                keyword.style.backgroundColor = '#FFFF00'; // Yellow highlight color
+                keyword.style.color = '#000000';
+            } else {
+                keyword.style.backgroundColor = '';
+                keyword.style.color = '#D0D3D4';
+            }
+        } else {
+            // Remove highlighting from other keywords
+            keyword.style.backgroundColor = '';
+            keyword.style.fontWeight = 'normal';
+            keyword.style.color = '#D0D3D4';
+        }
+    });
+}
+
+// Function to handle click on keyword links
+function handleKeywordClick(event) {
+    event.preventDefault(); // Prevent default link behavior
+
+    var keywordId = event.target.getAttribute('href').substring(1); // Get ID of clicked keyword
+    toggleBoldAndHighlight(keywordId); // Toggle bold styling and highlight the clicked keyword, and remove highlighting from other keywords
+}
+
+// Add click event listeners to keyword links
+var keywordLinks = document.querySelectorAll('a[href^="#"]');
+keywordLinks.forEach(function(link) {
+    link.addEventListener('click', handleKeywordClick);
+});
+</script>
