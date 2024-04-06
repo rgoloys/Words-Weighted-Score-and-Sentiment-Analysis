@@ -45,6 +45,7 @@ def test(request):
     return render(request, 'test.html', {'keywords': keywords, 'accept_scores': accept_scores})
 
 
+
 # Home page
 def index(request):
     # Get all keywords from the database
@@ -54,6 +55,8 @@ def index(request):
     accept_scores = AcceptScore.objects.all()
 
     return render(request, 'index.html', {'keywords': keywords, 'accept_scores': accept_scores})
+
+
 
 # signup page
 def user_signup(request):
@@ -65,6 +68,8 @@ def user_signup(request):
     else:
         form = UserCreationForm()
     return render(request, 'signup.html', {'form': form})
+
+
 
 # login page
 def user_login(request):
@@ -81,10 +86,12 @@ def user_login(request):
         form = LoginForm()
     return render(request, 'login.html', {'form': form})
 
+
+
 # logout page
 def user_logout(request):
     logout(request)
-    return redirect('test')
+    return redirect('login')
 
 
 

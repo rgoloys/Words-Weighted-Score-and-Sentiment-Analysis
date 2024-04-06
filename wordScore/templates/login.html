@@ -111,11 +111,12 @@
                 </form>
                 <div class="signup-link">
                     <p>Don't have an account? <a href="{% url 'signup' %}"> Sign up</a></p>
-
+                    {% load socialaccount %}
                     <!-- Inside your form or wherever you want the Google icon -->
-                    <a href="#" class="btn btn-google">
+                    <a href="{% provider_login_url 'google' %}?next=/" class="btn btn-google">
                         <i class="bi bi-google"></i> <p>Log in with Google</p>
                     </a>
+
                 </div>
             </div>
         </div>
