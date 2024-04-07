@@ -119,6 +119,7 @@
 
                     <div style=" height:570px; overflow-y:scroll;">
                         {% for uploaded_file in Sentiment_file %}
+                        
                         <li class="List" style="display:flex; justify-content:space-between; margin-top:12px;">
                             <div>
                                 <a href="{{ uploaded_file.document.url }}">{{ uploaded_file.document.name }}</a>
@@ -132,6 +133,7 @@
                                 </form>
                             </div>
                         </li>
+                       
                         {% endfor %}
 
                     </div>
