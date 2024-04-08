@@ -61,6 +61,9 @@
     form input{
         background-color: transparent;
     }
+    .btn-google p{
+        color: #FCC250;
+    }
 </style>
 
 <body>
@@ -121,6 +124,12 @@
                     </form>
                     <div class="login-link">
                         <p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
+
+                        {% load socialaccount %}
+                        <!-- Inside your form or wherever you want the Google icon -->
+                        <a href="{% provider_login_url 'google' %}?next=/" class="btn btn-google">
+                            <i class="bi bi-google"></i> <p>Sign Up with Google</p>
+                        </a>
                     </div>
 
 

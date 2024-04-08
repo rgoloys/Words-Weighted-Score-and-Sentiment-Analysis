@@ -9,6 +9,7 @@ urlpatterns = [
     path('login/', views.user_login, name='login'),
     path('signup/', views.user_signup, name='signup'),
     path('logout/', views.user_logout, name='logout'),
+
     path('keyword-scan/', views.keyword_scan, name='keyword_scan'),
     path('user-files/', views.user_files, name='user_files'),
     path('delete-file/<int:file_id>/', views.delete_file, name='delete_file'),
