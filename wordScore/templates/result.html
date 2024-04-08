@@ -108,7 +108,7 @@
                         <tr>
                             <td>
                                 <!-- Display admin paragraph with similarity score -->
-                                <p style="color: #D0D3D4; cursor: pointer;" onclick="displaySimilarityScore('{{ similarity_score }}')">{{ admin_paragraph }}<br> - Similarity Score: {{ similarity_score }}%</p>
+                                <p style="color: #D0D3D4; cursor: pointer;" onclick="displaySimilarityScore('{{ similarity_score }}')">{{ admin_paragraph }}<br><span style="color:#FFC451; font-weight:500;"> - Similarity Score: {{ similarity_score }}%</span></p>
                             </td>
                         </tr>
                         {% endfor %}
