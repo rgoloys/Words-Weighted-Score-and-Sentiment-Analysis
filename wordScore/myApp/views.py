@@ -393,15 +393,10 @@ def create_preview(file): # PREVIEW FORMATING
         doc = Document(io.BytesIO(file.read()))
         preview_text = ""
         for paragraph in doc.paragraphs:
-            sentences = re.split(r'(?<=[.!?]) +', paragraph.text.strip())  # Split paragraph into sentences
-            first_sentence = True
+            sentences = nltk.sent_tokenize(paragraph.text.strip())  # Tokenize paragraph into sentences
             for sentence in sentences:
-                if first_sentence:
-                    preview_text += "\t" + sentence.strip() + '\n'  # Add first sentence with indentation
-                    first_sentence = False
-                else:
-                    preview_text += sentence.strip() + '\n'  # Add subsequent sentences without indentation
-            preview_text += '\n'  # Add a newline after each paragraph
+                preview_text += sentence.strip() + '\n'  # Add each sentence followed by a newline
+            preview_text += "    " + sentence.strip() + "    \n\n"  # Add a newline after each paragraph
         return preview_text
     elif file.name.endswith('.pdf'):
         reader = PdfReader(io.BytesIO(file.read()))
@@ -449,9 +444,8 @@ def create_preview_with_highlights(file, admin_paragraph):
         for paragraph in doc.paragraphs:
             # Check similarity with admin paragraph
             similarity_score = compare_paragraphs(admin_paragraph, paragraph.text.strip())
-            if similarity_score > 80:  # Example threshold, adjust as needed
-                preview_text += '<span class="highlight">{}</span>'.format(
-                    paragraph.text.strip()) + '\n'
+            if similarity_score > 85:  # Example threshold, adjust as needed
+                preview_text += '<span class="highlight">{}</span>'.format(paragraph.text.strip()) + '\n'
             else:
                 preview_text += paragraph.text.strip() + '\n'
         return preview_text
@@ -533,10 +527,14 @@ def user_upload(request):
             # Zip admin paragraphs and similarity scores
             admin_data = zip(admin_paragraph_list, admin_similarity_scores)
 
+            # Get the file extension
+            file_extension = uploaded_file.name.split('.')[-1]
+
             return render(request, 'result.html', {'average_similarity_score': average_similarity_score,
                                                     'uploaded_file_obj': uploaded_file_obj,
                                                     'uploaded_text_preview': uploaded_text_preview,
-                                                    'admin_data': admin_data})
+                                                    'admin_data': admin_data,
+                                                    'file_extension': file_extension,})
 
     else:
         form = DocumentForm()

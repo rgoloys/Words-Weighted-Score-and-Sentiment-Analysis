@@ -94,10 +94,14 @@
         <div class="row gy-4 mt-5 justify-content-center" data-aos="zoom-in" data-aos-delay="250"
              style="padding:0;">
             <h4><a href="#">Overall Similarity Score: {{ average_similarity_score }}%</a></h4>
-            <div class="col-xl-2 col-md-4" style="Height:100%; width: 70%;">
+            <div class="col-xl-2 col-md-4" style="Height:auto; width: 70%;">
                 <div class="icon-box">
                     <h5 style="margin-bottom:20px;"><a href="{% url 'user_files' %}">{{ uploaded_file_obj.document }}</a></h5>
-                    <pre style="color: #D0D3D4;height: 600px; overflow-y:scroll;">{{ uploaded_text_preview }}</pre>
+                    {% if file_extension == 'docx' %}
+                        <p style="color: #D0D3D4;margin-bottom: 20px; height: auto; overflow-y:scroll;">{{ uploaded_text_preview }}</p>
+                    {% else %}
+                        <pre style="color: #D0D3D4;margin-bottom: 20px; height: auto; overflow-y:scroll;">{{ uploaded_text_preview }}</pre>
+                    {% endif %}
                 </div>
             </div>
             <div class="col-xl-2 col-md-4" style="Height:100%; width: 30%;">

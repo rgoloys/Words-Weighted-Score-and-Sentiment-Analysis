@@ -1,16 +1,15 @@
 # Ignore all uploaded files files in the 'upload' directory
-wordScore/uploads/sentiment/*.pdf
-wordScore/uploads/sentiment/*.docx
-wordScore/uploads/sentiment/*.xlxs
-
-wordScore/uploads/*.pdf
-wordScore/uploads/*.docx
-wordScore/uploads/*.xlxs
+wordScore/uploads/sentiment/
+wordScore/uploads/
+*.pdf
+*.docx
+*.xlxs
 
 #ignore sqlite
 wordScore/db.sqlite3
+db.sqlite3
+
 wordScore/package-lock.json
 wordScore/package.json
 
 wordScore/myApp/__pycache__/views.cpython-312.pyc
-wordScore/db.sqlite3
