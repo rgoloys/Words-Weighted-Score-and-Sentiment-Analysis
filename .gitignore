@@ -11,3 +11,6 @@ wordScore/uploads/*.xlxs
 wordScore/db.sqlite3
 wordScore/package-lock.json
 wordScore/package.json
+
+wordScore/myApp/__pycache__/views.cpython-312.pyc
+wordScore/db.sqlite3

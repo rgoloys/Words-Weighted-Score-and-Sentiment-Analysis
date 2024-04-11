@@ -449,7 +449,7 @@ def create_preview_with_highlights(file, admin_paragraph):
         for paragraph in doc.paragraphs:
             # Check similarity with admin paragraph
             similarity_score = compare_paragraphs(admin_paragraph, paragraph.text.strip())
-            if similarity_score > 99:  # Example threshold, adjust as needed
+            if similarity_score > 80:  # Example threshold, adjust as needed
                 preview_text += '<span class="highlight">{}</span>'.format(
                     paragraph.text.strip()) + '\n'
             else:
