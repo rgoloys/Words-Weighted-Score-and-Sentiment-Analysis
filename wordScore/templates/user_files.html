@@ -35,7 +35,6 @@
 <style>
 
     form button{
-
         width: 100px;
         color: #FFFF;
         background-color: transparent;
@@ -52,6 +51,16 @@
     }
     form input{
         background-color: transparent;
+    }
+    #box{
+        height:auto; 
+        max-height: 700px;
+        width: 50%; 
+    }
+    #insideBox{
+        height: auto; 
+        max-height: 570px;
+        overflow-y:scroll;
     }
 </style>
 
@@ -77,76 +86,77 @@
     </div>
 </header><!-- End Header -->
 
-<!-- ======= Hero Section ======= -->
+<!-- Hero section -->
 <section id="hero" class="d-flex align-items-center justify-content-center">
     <div class="container" data-aos="fade-up" style="padding:0;">
-
-        <div class="row gy-4 mt-5 justify-content-center" data-aos="zoom-in" data-aos-delay="250"
-             style="padding:0;">
-            <div class="col-xl-2 col-md-4" style="Height:700px; width: 50%; ">
+        <div class="row gy-4 mt-5 justify-content-center" data-aos="zoom-in" data-aos-delay="250" style="padding:0;">
+            <div class="col-xl-2 col-md-4" id="box">
                 <div class="icon-box">
+                    <!-- Words Weighted Files section -->
                     <i class="ri-calendar-todo-line"></i>
                     <h3><a href="{% url 'user_upload' %}">Words Weighted Files</a></h3>
-                    <div style=" height:570px; overflow-y:scroll;">
-                        {% for file_entry in user_files %}
-                        <li class="List" style="display:flex; justify-content:space-between; margin-top:12px;">
-                        <div style="width: 300px;">
-                            <a href="{% url 'file_details' file_entry.id %}" style="display:flex; margin-right:12px;">{{file_entry.file.name}}</a>
-                        </div>
+                    <div id="insideBox">
 
-                        <div style="display:flex;">
-                            {% if file_entry.score_description == "Score Passed" %}
-                            <p style="color:#FFFFFF; margin-right: 12px;">Score: <span class="pass-score">{{ file_entry.overall_total }}</span>
-                            </p>
-                            {% else %}
-                            <p style="color:#FFFFFF; margin-right: 12px;">Score: <span class="failed-score">{{ file_entry.overall_total }}</span>
-                            </p>
-                            {% endif %}
-                            <form action="{% url 'delete_file' file_entry.id %}" method="post">
-                                {% csrf_token %}
-                                <button type="submit">Delete</button>
-                            </form>
-                        </div>
-                    </li>
-                    {% endfor %}
+                        {% if user_files %}
+                            <!-- Iterate over user_files if data is available -->
+                            {% for file_entry in user_files %}
+                                <li class="List" style="display:flex; justify-content:space-between; margin-top:12px;">
+                                    <div style="width: 300px;">
+                                        <a href="{% url 'file_details' file_entry.id %}" style="display:flex; margin-right:12px;">{{file_entry.file.name}}</a>
+                                    </div>
+                                    <div style="display:flex;">
+                                        {% if file_entry.score_description == "Score Passed" %}
+                                            <p style="color:#FFFFFF; margin-right: 12px;">Score: <span class="pass-score">{{ file_entry.overall_total }}</span></p>
+                                        {% else %}
+                                            <p style="color:#FFFFFF; margin-right: 12px;">Score: <span class="failed-score">{{ file_entry.overall_total }}</span></p>
+                                        {% endif %}
+                                        <form action="{% url 'delete_file' file_entry.id %}" method="post">
+                                            {% csrf_token %}
+                                            <button type="submit">Delete</button>
+                                        </form>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        {% else %}
+                            <!-- Display message if no data available -->
+                            <p style="color:#FBC150;font-weight: 500;">No Files Uploaded.</p>
+                        {% endif %}
                     </div>
                 </div>
             </div>
-            <div class="col-xl-2 col-md-4" style="Height:700px;width: 50%;">
+            <div class="col-xl-2 col-md-4" id="box">
                 <div class="icon-box">
+                    <!-- Sentiment Analysis Files section -->
                     <i class="ri-bar-chart-box-line"></i>
                     <h3><a href="{% url 'user_files' %}">Sentiment Analysis Files</a></h3>
+                    <div id="insideBox">
 
-                    <div style=" height:570px; overflow-y:scroll;">
-                        {% for uploaded_file in Sentiment_file %}
-                        
-                        <li class="List" style="display:flex; justify-content:space-between; margin-top:12px;">
-                            <div>
-                                <a href="{{ uploaded_file.document.url }}">{{ uploaded_file.document.name }}</a>
-                            </div>
-
-                            <div style="display:flex;" >
-                                <p style="color:#FFFFFF; margin-right: 12px;">Similarity Score: {{uploaded_file.similarity_score }}</p>
-                                <form action="{% url 'delete_uploaded_file' uploaded_file.id %}" method="post">
-                                    {% csrf_token %}
-                                    <button type="submit">Delete</button>
-                                </form>
-                            </div>
-                        </li>
-                       
-                        {% endfor %}
-
+                        {% if Sentiment_file %}
+                            <!-- Iterate over Sentiment_file if data is available -->
+                            {% for uploaded_file in Sentiment_file %}
+                                <li class="List" style="display:flex; justify-content:space-between; margin-top:12px;">
+                                    <div>
+                                        <a href="{{ uploaded_file.document.url }}">{{ uploaded_file.document.name }}</a>
+                                    </div>
+                                    <div style="display:flex;">
+                                        <p style="color:#FFFFFF; margin-right: 12px;">Similarity Score: {{uploaded_file.similarity_score }}</p>
+                                        <form action="{% url 'delete_uploaded_file' uploaded_file.id %}" method="post">
+                                            {% csrf_token %}
+                                            <button type="submit">Delete</button>
+                                        </form>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        {% else %}
+                            <!-- Display message if no data available -->
+                            <p style="color:#FBC150;font-weight: 500;">No Files Uploaded.</p>
+                        {% endif %}
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    </div>
 </section><!-- End Hero -->
-<main id="main">
-
-</main><!-- End #main -->
 
 
 <div id="preloader"></div>

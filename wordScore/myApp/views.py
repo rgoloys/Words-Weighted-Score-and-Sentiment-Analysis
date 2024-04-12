@@ -218,22 +218,34 @@ def user_files(request):
     user_files = FileKeywordCount.objects.filter(user=request.user)
 
     Sentiment_file = UploadedFile.objects.filter(user=request.user)
-    # Calculate overall score and remarks for each file
-    for file_entry in user_files:
-        overall_total = sum(data['total'] for data in file_entry.keyword_count.values())
-        accept_score = AcceptScore.objects.first()  # Assuming only one accept score exists
 
-        if overall_total == accept_score.score:
-            score_description = "Score Passed"
-        elif overall_total < accept_score.score:
-            score_description = "Failed, Score is Below the passing score"
-        else:
-            score_description = "Failed, Score is Higher than the passing score"
+    # Check if user_files has any data
+    if user_files.exists():
+        # Calculate overall score and remarks for each file
+        for file_entry in user_files:
+            overall_total = sum(data['total'] for data in file_entry.keyword_count.values())
+            accept_score = AcceptScore.objects.first()  # Assuming only one accept score exists
 
-        file_entry.overall_total = overall_total
-        file_entry.score_description = score_description
+            if overall_total == accept_score.score:
+                score_description = "Score Passed"
+            elif overall_total < accept_score.score:
+                score_description = "Failed, Score is Below the passing score"
+            else:
+                score_description = "Failed, Score is Higher than the passing score"
 
-    return render(request, 'user_files.html', {'user_files': user_files, 'Sentiment_file': Sentiment_file})
+            file_entry.overall_total = overall_total
+            file_entry.score_description = score_description
+    else:
+        # If user_files is empty, return a string indicating no data available
+        return render(request, 'user_files.html', {'no_data_available': True, 'Sentiment_file': Sentiment_file})
+
+    # Check if Sentiment_file has any data
+    if Sentiment_file.exists():
+        # If Sentiment_file contains data, proceed with rendering the template
+        return render(request, 'user_files.html', {'user_files': user_files, 'Sentiment_file': Sentiment_file})
+    else:
+        # If Sentiment_file is empty, return a string indicating no data available for sentiment analysis files
+        return render(request, 'user_files.html', {'no_sentiment_data_available': True, 'user_files': user_files})
 
 
 @login_required
