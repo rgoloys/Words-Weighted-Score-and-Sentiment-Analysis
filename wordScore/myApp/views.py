@@ -449,15 +449,22 @@ def compare_paragraphs(admin_paragraphs, paragraph):
     return max_similarity_score
 
 
-def create_preview_with_highlights(file, admin_paragraph):
+def create_preview_with_highlights(file, admin_data):
     if file.name.endswith('.docx'):
         doc = Document(io.BytesIO(file.read()))
         preview_text = ""
         for paragraph in doc.paragraphs:
-            # Check similarity with admin paragraph
-            similarity_score = compare_paragraphs(admin_paragraph, paragraph.text.strip())
-            if similarity_score > 85:  # Example threshold, adjust as needed
-                preview_text += '<span class="highlight">{}</span>'.format(paragraph.text.strip()) + '\n'
+            # Check similarity with each admin paragraph
+            max_similarity_score = 99
+            max_similarity_color = None
+            for admin_paragraph, color in admin_data:
+                similarity_score = compare_paragraphs(admin_paragraph, paragraph.text.strip())
+                if similarity_score > max_similarity_score:
+                    max_similarity_score = similarity_score
+                    max_similarity_color = color
+
+            if max_similarity_color:  # If there's a color for the highest similarity
+                preview_text += '<span style="background-color:{};">{}</span>'.format(max_similarity_color, paragraph.text.strip()) + '\n'
             else:
                 preview_text += paragraph.text.strip() + '\n'
         return preview_text
@@ -468,10 +475,17 @@ def create_preview_with_highlights(file, admin_paragraph):
             text = page.extract_text()
             lines = text.split('\n')
             for line in lines:
-                # Check similarity with admin paragraph
-                similarity_score = compare_paragraphs(admin_paragraph, line.strip())
-                if similarity_score > 99:  # Example threshold, adjust as needed
-                    preview_text += "<span class='highlight'>{}</span>".format(line.strip()) + '\n'
+                # Check similarity with each admin paragraph
+                max_similarity_score = 99
+                max_similarity_color = None
+                for admin_paragraph, color in admin_data:
+                    similarity_score = compare_paragraphs(admin_paragraph, line.strip())
+                    if similarity_score > max_similarity_score:
+                        max_similarity_score = similarity_score
+                        max_similarity_color = color
+
+                if max_similarity_color:  # If there's a color for the highest similarity
+                    preview_text += '<span style="background-color:{};">{}</span>'.format(max_similarity_color, line.strip()) + '\n'
                 else:
                     preview_text += line.strip() + '\n'
         return preview_text
@@ -482,13 +496,20 @@ def create_preview_with_highlights(file, admin_paragraph):
             sheet = wb[sheet_name]
             for row in sheet.iter_rows():
                 for cell in row:
-                    # Check similarity with admin paragraph
-                    similarity_score = compare_paragraphs(admin_paragraph, str(cell.value))
-                    if similarity_score > 99:  # Example threshold, adjust as needed
-                        preview_text += "<span class='highlight'>{}</span>".format(
-                            str(cell.value)) + " "
+                    cell_text = str(cell.value)
+                    # Check similarity with each admin paragraph
+                    max_similarity_score = 0
+                    max_similarity_color = None
+                    for admin_paragraph, color in admin_data:
+                        similarity_score = compare_paragraphs(admin_paragraph, cell_text.strip())
+                        if similarity_score > max_similarity_score:
+                            max_similarity_score = similarity_score
+                            max_similarity_color = color
+
+                    if max_similarity_color:  # If there's a color for the highest similarity
+                        preview_text += '<span style="background-color:{};">{}</span>'.format(max_similarity_color, cell_text) + " "
                     else:
-                        preview_text += str(cell.value) + " "
+                        preview_text += cell_text + " "
                 preview_text += "\n"
         return preview_text
     else:
@@ -508,8 +529,11 @@ def user_upload(request):
             # Get the latest admin paragraph
             admin_paragraph = AdminInput.objects.last().paragraph
 
+            # Get all admin paragraphs with colors
+            admin_data = AdminInput.objects.values_list('paragraph', 'color')
+
             # Create preview content with highlights
-            uploaded_text_preview = create_preview_with_highlights(uploaded_file, admin_paragraph)
+            uploaded_text_preview = create_preview_with_highlights(uploaded_file, admin_data)
 
             # Get all admin paragraphs
             admin_paragraphs = AdminInput.objects.all().values_list('paragraph', flat=True)
