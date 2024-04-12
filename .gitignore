@@ -10,9 +10,9 @@ wordScore/db.sqlite3
 wordScore/myApp/__pycache__/urls.cpython-312.pyc
 
 db.sqlite3
-*.sqlite3
-*.pyc
-*.json
+.sqlite3
+.pyc
+.json
 
 wordScore/package-lock.json
 wordScore/package.json
