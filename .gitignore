@@ -6,10 +6,8 @@ wordScore/uploads/
 *.xlxs
 
 #ignore sqlite
-wordScore/db.sqlite3
-db.sqlite3
+wordScore/
+*.sqlite3
+*.json
+*.pyc
 
-wordScore/package-lock.json
-wordScore/package.json
-
-wordScore/myApp/__pycache__/views.cpython-312.pyc
