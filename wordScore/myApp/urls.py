@@ -19,4 +19,5 @@ urlpatterns = [
     path('delete-uploaded-file/<int:file_id>/', views.delete_uploaded_file, name='delete_uploaded_file'),
     path('', views.test, name='test'),
     path('AboutUs/', views.AboutUs, name="AboutUs"),
+    path('Profile/', views.Profile, name='Profile')
 ]

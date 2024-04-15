@@ -34,6 +34,9 @@ from django.utils.safestring import mark_safe
 nltk.download('vader_lexicon')
 sid = SentimentIntensityAnalyzer()
 
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .forms import UserEditForm
 
 
 def test(request):
@@ -47,6 +50,24 @@ def test(request):
 def AboutUs(request):
      return render(request, 'AboutUs.html')
 
+@login_required
+def Profile(request):
+    if request.method == 'POST':
+        form = UserEditForm(request.POST, instance=request.user)
+        if form.is_valid():
+            user = form.save(commit=False)
+            old_password = form.cleaned_data.get('old_password')
+            new_password = form.cleaned_data.get('new_password')
+
+            if old_password and new_password:
+                user.set_password(new_password)
+                messages.success(request, 'Password updated successfully.')
+            user.save()
+            messages.success(request, 'Profile updated successfully.')
+            return redirect('Profile')  # Change 'profile' to the actual URL pattern name for the profile view
+    else:
+        form = UserEditForm(instance=request.user)
+    return render(request, 'Profile.html', {'form': form})
 
 # Home page
 def index(request):
@@ -94,7 +115,6 @@ def user_login(request):
 def user_logout(request):
     logout(request)
     return redirect('login')
-
 
 
 @login_required
