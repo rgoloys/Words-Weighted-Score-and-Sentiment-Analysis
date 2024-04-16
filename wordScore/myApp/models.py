@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 import random
 from django.contrib.auth import get_user_model
 from django.utils import timezone
+
 class KeyWord(models.Model):
     keyword_id = models.AutoField(primary_key=True)
     keywords = models.CharField(max_length=100)
@@ -45,8 +46,6 @@ class FileKeywordCount(models.Model):
         for data in self.keyword_count.values():
             overall_total += data['total']
         return overall_total
-
-
 
 
 class UploadedFile(models.Model):
