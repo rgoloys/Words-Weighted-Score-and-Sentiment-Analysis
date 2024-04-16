@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 import random
 from django.contrib.auth import get_user_model
-
+from django.utils import timezone
 class KeyWord(models.Model):
     keyword_id = models.AutoField(primary_key=True)
     keywords = models.CharField(max_length=100)
@@ -36,7 +36,7 @@ class FileKeywordCount(models.Model):
     file = models.FileField(upload_to='uploads/')
     file_type = models.CharField(max_length=10)
     keyword_count = models.JSONField()
-
+    date_added = models.DateField(default=timezone.now)
     def __str__(self):
         return f"File: {self.file.name}, User: {self.user.username}"
 
@@ -53,7 +53,7 @@ class UploadedFile(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     document = models.FileField(upload_to='uploads/sentiment/')
     similarity_score = models.FloatField(null=True, blank=True)
-
+    date_added = models.DateField(default=timezone.now)
 
 class AdminInput(models.Model):
     paragraph = models.TextField()
