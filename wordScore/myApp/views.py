@@ -525,6 +525,9 @@ def user_upload(request):
         if form.is_valid():
             uploaded_file = request.FILES['document']
             
+            # Extract the file extension
+            file_extension = uploaded_file.name.split('.')[-1]
+
             # Get the latest admin paragraph
             admin_paragraph = AdminInput.objects.last().paragraph
 
@@ -550,7 +553,8 @@ def user_upload(request):
 
             # Save the uploaded file and similarity score to the database
             uploaded_file_obj = UploadedFile(user=request.user, document=uploaded_file,
-                                             similarity_score=average_similarity_score)
+                                             similarity_score=average_similarity_score,
+                                             file_type=file_extension)
             uploaded_file_obj.save()
 
             # Mark the preview content as safe for HTML rendering
@@ -559,14 +563,11 @@ def user_upload(request):
             # Zip admin paragraphs and similarity scores
             admin_data = zip(admin_paragraph_list, admin_similarity_scores)
 
-            # Get the file extension
-            file_extension = uploaded_file.name.split('.')[-1]
-
             return render(request, 'result.html', {'average_similarity_score': average_similarity_score,
                                                     'uploaded_file_obj': uploaded_file_obj,
                                                     'uploaded_text_preview': uploaded_text_preview,
                                                     'admin_data': admin_data,
-                                                    'file_extension': file_extension,})
+                                                    'file_extension': file_extension})
 
     else:
         form = DocumentForm()

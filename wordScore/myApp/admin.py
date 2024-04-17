@@ -3,7 +3,7 @@ from django.contrib import admin
 from .models import KeyWord, AcceptScore
 from .models import AdminInput
 from .models import FileKeywordCount, UploadedFile
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from dateutil.relativedelta import relativedelta
 from django.utils.translation import gettext_lazy as _
 from django.contrib.admin import SimpleListFilter
@@ -11,8 +11,66 @@ from dateutil.parser import parse as parse_date
 from django.utils.html import format_html
 from django import forms
 from django.urls import reverse
-from bootstrap_daterangepicker import widgets, fields
+from django.contrib.auth.models import User
+from rangefilter.filters import (
+    DateRangeFilterBuilder,
+    DateTimeRangeFilterBuilder,
+    NumericRangeFilterBuilder,
+    DateRangeQuickSelectListFilterBuilder,
+)
 
+#Filter by username
+class UserFilter(admin.SimpleListFilter):
+    title = _('User')
+    parameter_name = 'user'
+
+    def lookups(self, request, model_admin):
+        users = User.objects.all()
+        return [(user.id, user.username) for user in users]
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(user_id=self.value())
+
+
+#Filter by FILE_TYPE1
+class FileKeywordType(admin.SimpleListFilter):
+    title = _('File Type')
+    parameter_name = 'file_type'
+
+    def lookups(self, request, model_admin):
+        # Get distinct file types from both models
+        #uploaded_file_types = UploadedFile.objects.values_list('file_type', flat=True).distinct()
+        keyword_file_types = FileKeywordCount.objects.values_list('file_type', flat=True).distinct()
+        all_file_types = set(keyword_file_types)
+        return [(file_type, file_type) for file_type in all_file_types]
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(file_type=self.value())
+        
+#Filteration for KeywordScore Uploaded file
+@admin.register(UploadedFile)
+class UploadedFileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'document', 'similarity_score', 'date_added')
+    list_filter = (UserFilter, ("date_added", DateRangeFilterBuilder(title=_("Filter by date"))),)
+
+#Filteration for FileKeywordCount Uploaded file
+@admin.register(FileKeywordCount)
+class FileKeywordCountAdmin(admin.ModelAdmin):
+    list_display = ('user', 'file', 'file_type', 'calculate_overall_total', 'date_added')
+    readonly_fields = ('calculate_overall_total',)
+    list_filter = (UserFilter, FileKeywordType, ("date_added", DateRangeFilterBuilder(title=_("Filter by date"))))
+
+    def calculate_overall_total(self, obj):
+        overall_total = 0
+        for data in obj.keyword_count.values():
+            overall_total += data['total']
+        return overall_total
+    calculate_overall_total.short_description = 'Overall Score'
+
+
+#Funtion CRUD for Keyword, AcceptScore, AdminParagraph
 class KeyWordAdmin(admin.ModelAdmin):
     list_display = ('keywords', 'score', 'admin_user', 'date_added', 'color_code')  # Include 'score' in the list display
 
@@ -21,71 +79,6 @@ class AcceptScoreAdmin(admin.ModelAdmin):
 
 class AdminInputAdmin(admin.ModelAdmin):
     list_display = ('paragraph', 'color')  # Include 'score' in the list display
-
-
-class DateRangeForm(forms.Form):
-    start_date = forms.DateField(label=_('Start Date'), widget=forms.DateInput(attrs={'type': 'date'}))
-    end_date = forms.DateField(label=_('End Date'), widget=forms.DateInput(attrs={'type': 'date'}))
-
-class DateAddedRangeFilter(admin.SimpleListFilter):
-    title = _('Date Added Range')
-    parameter_name = 'date_added_range'
-
-    def lookups(self, request, model_admin):
-        return (
-            ('today', _('Today')),
-            ('this_week', _('This week')),
-            ('this_month', _('This month')),
-            ('custom', _('Custom date range')),
-        )
-
-    def queryset(self, request, queryset):
-        if self.value() == 'today':
-            return queryset.filter(date_added=date.today())
-        elif self.value() == 'this_week':
-            start_of_week = date.today() - timedelta(days=date.today().weekday())
-            end_of_week = start_of_week + timedelta(days=6)
-            return queryset.filter(date_added__range=[start_of_week, end_of_week])
-        elif self.value() == 'this_month':
-            start_of_month = date.today().replace(day=1)
-            end_of_month = start_of_month + relativedelta(months=1, days=-1)
-            return queryset.filter(date_added__range=[start_of_month, end_of_month])
-        elif self.value() == 'custom':
-            form = DateRangeForm(request.GET)
-            if form.is_valid():
-                start_date = form.cleaned_data['start_date']
-                end_date = form.cleaned_data['end_date']
-                return queryset.filter(date_added__range=[start_date, end_date])
-        return queryset
-
-class FileKeywordCountAdmin(admin.ModelAdmin):
-    list_display = ('user_link','file', 'file_type', 'calculate_overall_total',  'date_added')
-    readonly_fields = ('calculate_overall_total',)
-    list_filter = (DateAddedRangeFilter, 'user', 'file_type')
-
-    def user_link(self, obj):
-        # Generate a link to filter files by user
-        return format_html('<a href="{}?user={}">{}</a>',
-                           reverse('admin:myApp_filekeywordcount_changelist'),
-                           obj.user.id,
-                           obj.user.username)
-    user_link.admin_order_field = 'user__username'  # Allow sorting by username
-
-admin.site.register(FileKeywordCount, FileKeywordCountAdmin)
-
-
-@admin.register(UploadedFile)
-class UploadedFileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'document', 'similarity_score', 'date_added')
-    list_filter = (DateAddedRangeFilter, 'user')  # Added 'user' and 'document__file_type' to list_filter
-
-    def user(self, obj):
-        # Generate a link to filter files by user
-        return format_html('<a href="{}?user={}">{}</a>',
-                           reverse('admin:myApp_uploadedfile_changelist'),
-                           obj.user.id,
-                           obj.user.username)
-    user.admin_order_field = 'user__username'  # Allow sorting by username
 
 
 admin.site.register(KeyWord, KeyWordAdmin)

@@ -41,14 +41,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'myApp',
-    'django.contrib.sites',
+    'django.contrib.sites',  # Make sure to configure SITE_ID if necessary
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
-    'bootstrap_daterangepicker',
+    'bootstrap_daterangepicker',  # Make sure package is installed
+    'myApp',  # Place your app after all dependencies
+    'django_filters',
+    'rangefilter',
 ]
+
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
@@ -135,13 +138,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = '/static/'
-# Add this below line in settings.py
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Define the directory where static files will be collected
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),  # Directory containing your static files
+    os.path.join(BASE_DIR, 'static'),
 ]
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
