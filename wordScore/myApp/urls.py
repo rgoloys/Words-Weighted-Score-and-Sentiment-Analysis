@@ -16,8 +16,10 @@ urlpatterns = [
     path('file-details/<int:file_id>/', views.file_details, name='file_details'),
     path('back/', back_or_default, name='back'),
     path('senti/', views.user_upload, name='user_upload'),
-    path('delete-uploaded-file/<int:file_id>/', views.delete_uploaded_file, name='delete_uploaded_file'),
     path('', views.test, name='test'),
     path('AboutUs/', views.AboutUs, name="AboutUs"),
-    path('Profile/', views.Profile, name='Profile')
+    path('Profile/', views.Profile, name='Profile'),
+    path('backUp/', views.backUp, name="backUp"),
+    path('move_file/<int:file_id>/', views.move_file, name='move_file'),
+    path('restore_file/<int:file_id>/', views.restore_file, name='restore_file'),
 ]

@@ -29,7 +29,9 @@ import re
 import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
 from django.utils.safestring import mark_safe
-
+from django.utils import timezone
+from django.urls import reverse
+from django.conf import settings
 # Initialize the sentiment analyzer
 nltk.download('vader_lexicon')
 sid = SentimentIntensityAnalyzer()
@@ -267,48 +269,118 @@ def user_files(request):
         # If Sentiment_file is empty, return a string indicating no data available for sentiment analysis files
         return render(request, 'user_files.html', {'no_sentiment_data_available': True, 'user_files': user_files})
 
+#Function For BackUp feautures
+@login_required
+def backUp(request):
+    # Retrieve all files uploaded by the current user
+    user_files = FileKeywordCount.objects.filter(user=request.user)
+    Sentiment_file = UploadedFile.objects.filter(user=request.user)
+    return render(request, 'backUp.html', {'user_files': user_files, 'Sentiment_file': Sentiment_file})
 
 @login_required
-def delete_uploaded_file(request, file_id):
-    try:
-        # Retrieve the uploaded file
-        uploaded_file = UploadedFile.objects.get(id=file_id)
+def move_file(request, file_id):
+    if request.method == 'POST':
+        try:
+            # Check if the object is an instance of FileKeywordCount
+            if FileKeywordCount.objects.filter(pk=file_id).exists():
+                # If so, update fields for FileKeywordCount
+                file_instance = FileKeywordCount.objects.get(pk=file_id)
+                file_instance.backUp = 2
+                file_instance.date_backUp = timezone.now()
+                file_instance.save()
+            # If not, check if it's an instance of UploadedFile
+            elif UploadedFile.objects.filter(pk=file_id).exists():
+                # If so, update fields for UploadedFile
+                file_instance = UploadedFile.objects.get(pk=file_id)
+                file_instance.backUp = 2
+                file_instance.date_backUp = timezone.now()
+                # Update fields for UploadedFile if needed
+                file_instance.save()
+            else:
+                # Handle the case where the object doesn't belong to either model
+                return HttpResponse("File not found or unknown file type.")
+        except ObjectDoesNotExist:
+            # Handle the case where the object does not exist
+            return HttpResponse("File does not exist.")
+        # Redirect to a page displaying user files
+        return redirect('user_files')
+    else:
+        # Handle other HTTP methods, e.g., GET
+        return HttpResponseNotAllowed(['POST'])
 
-        # Check if the logged-in user owns the file
-        if uploaded_file.user == request.user:
-            # Delete the uploaded file
-            uploaded_file.delete()
-            # Redirect back to the user files page or any other appropriate page
-            return redirect('user_files')
+
+@login_required
+def restore_file(request, file_id):
+    try:
+        # Check if the object is an instance of FileKeywordCount
+        if FileKeywordCount.objects.filter(pk=file_id).exists():
+            # If so, update fields for FileKeywordCount
+            file_entry = FileKeywordCount.objects.get(pk=file_id)
+            file_entry.backUp = 1
+            file_entry.date_backUp = timezone.now()
+            file_entry.save()
+        # If not, check if it's an instance of UploadedFile
+        elif UploadedFile.objects.filter(pk=file_id).exists():
+            # If so, update fields for UploadedFile
+            file_entry = UploadedFile.objects.get(pk=file_id)
+            # Update fields for UploadedFile
+            # For example, if you want to set a default value for file_type
+            file_entry.backUp = 1
+            file_entry.date_backUp = timezone.now()
+            file_entry.file_type = "default_file_type"
+            file_entry.save()
         else:
-            # Return an error message or handle unauthorized access
-            return HttpResponse("You are not authorized to delete this file.")
-    except UploadedFile.DoesNotExist:
-        # Handle the case where the file does not exist
+            # Handle the case where the object doesn't belong to either model
+            return HttpResponse("File not found or unknown file type.")
+    except  :
+        # Handle the case where the object does not exist
         return HttpResponse("File does not exist.")
+
+    # Redirect the user to a specific URL after restoring the file
+    return redirect(reverse('backUp'))
+
 
 
 # file deletion
-
 @login_required
 def delete_file(request, file_id):
     try:
-        # Retrieve the file entry
-        file_entry = FileKeywordCount.objects.get(id=file_id)
+        # Check if the file is in FileKeywordCount
+        try:
+            file_entry = FileKeywordCount.objects.get(id=file_id)
+            is_keyword_count = True
+        except FileKeywordCount.DoesNotExist:
+            # If not found in FileKeywordCount, check UploadedFile
+            file_entry = UploadedFile.objects.get(id=file_id)
+            is_keyword_count = False
 
         # Check if the logged-in user owns the file
         if file_entry.user == request.user:
-            # Delete the file entry
+            # Delete the file from the local storage
+            if is_keyword_count:
+                # For FileKeywordCount
+                file_path = os.path.join(settings.MEDIA_ROOT, file_entry.file.name)
+            else:
+                # For UploadedFile
+                file_path = os.path.join(settings.MEDIA_ROOT, file_entry.document.name)
+                
+            if os.path.exists(file_path):
+                os.remove(file_path)
+
+            # Delete the file entry from the database
             file_entry.delete()
-            # Redirect back to the user files page or any other appropriate page
-            return redirect('user_files')
+
+            # Redirect back to the backup page
+            return redirect('backUp')
         else:
             # Return an error message or handle unauthorized access
             return HttpResponse("You are not authorized to delete this file.")
-    except FileKeywordCount.DoesNotExist:
-        # Handle the case where the file does not exist
-        return HttpResponse("File does not exist.")
-
+    except (FileKeywordCount.DoesNotExist, UploadedFile.DoesNotExist):
+        # Handle the case where the file entry does not exist
+        return HttpResponse("File entry does not exist.")
+    except Exception as e:
+        # Handle any other exceptions
+        return HttpResponse(str(e))
 
 @login_required
 def file_details(request, file_id):
