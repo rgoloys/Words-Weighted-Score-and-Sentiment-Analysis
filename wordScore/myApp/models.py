@@ -38,6 +38,11 @@ class FileKeywordCount(models.Model):
     file_type = models.CharField(max_length=10)
     keyword_count = models.JSONField()
     date_added = models.DateField(default=timezone.now)
+
+    # Add fields for backup features
+    backUp = models.IntegerField(default=1)
+    date_backUp = models.DateField(default=timezone.now)
+    
     def __str__(self):
         return f"File: {self.file.name}, User: {self.user.username}"
 
@@ -55,6 +60,10 @@ class UploadedFile(models.Model):
     date_added = models.DateField(default=timezone.now)
     file_type = models.CharField(max_length=100)  # Add the file_type field
 
+    # Add fields for backup features
+    backUp = models.IntegerField(default=1)
+    date_backUp = models.DateField(default=timezone.now)
+    
     def __str__(self):
         return f"UploadedFile ID: {self.id}, User: {self.user.username}"
     
