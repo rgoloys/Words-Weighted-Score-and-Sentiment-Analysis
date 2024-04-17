@@ -53,7 +53,11 @@ class UploadedFile(models.Model):
     document = models.FileField(upload_to='uploads/sentiment/')
     similarity_score = models.FloatField(null=True, blank=True)
     date_added = models.DateField(default=timezone.now)
+    file_type = models.CharField(max_length=100)  # Add the file_type field
 
+    def __str__(self):
+        return f"UploadedFile ID: {self.id}, User: {self.user.username}"
+    
 class AdminInput(models.Model):
     paragraph = models.TextField()
     color = models.CharField(max_length=7, default='#000000')  # Field to store color code
