@@ -360,16 +360,23 @@ def back_or_default(request, default_url='/'):
 
 ##### SENTIMENT FUNCTION #####
 
-def analyze_sentiment(text1, text2):
-    # Analyze sentiment using TextBlob
-    sentiment1 = TextBlob(text1).sentiment.polarity
-    sentiment2 = TextBlob(text2).sentiment.polarity
+def analyze_sentiment_vader(text1, text2):
+    # Initialize VADER
+    sid = SentimentIntensityAnalyzer()
 
-    # Calculate the absolute difference between the sentiment polarity scores
-    diff = abs(sentiment1 - sentiment2)
+    # Analyze sentiment of text1 and text2
+    scores1 = sid.polarity_scores(text1)
+    scores2 = sid.polarity_scores(text2)
+
+    # Get compound scores
+    compound_score1 = scores1['compound']
+    compound_score2 = scores2['compound']
+
+    # Calculate the absolute difference between the compound scores
+    diff = abs(compound_score1 - compound_score2)
 
     # Map the difference to a score between 0 and 100
-    similarity_score = 100 - (diff * 100)
+    similarity_score = 100 - (diff * 50)  # VADER compound score ranges from -1 to 1, so we multiply by 50
 
     # Ensure the score is within the valid range [0, 100]
     similarity_score = max(0, min(100, similarity_score))
@@ -457,15 +464,15 @@ def create_preview(file): # PREVIEW FORMATING
 
 def compare_paragraphs(admin_paragraphs, paragraph):
     max_similarity_score = 0
-    
+
     # Iterate over each admin paragraph
     for admin_paragraph in admin_paragraphs:
-        # Perform sentiment analysis on both paragraphs
-        similarity_score = analyze_sentiment(admin_paragraph, paragraph)
-        
+        # Perform sentiment analysis on both paragraphs using VADER
+        similarity_score = analyze_sentiment_vader(admin_paragraph, paragraph)
+
         # Update the maximum similarity score if needed
         max_similarity_score = max(max_similarity_score, similarity_score)
-    
+
     return max_similarity_score
 
 
@@ -524,7 +531,7 @@ def user_upload(request):
         form = DocumentForm(request.POST, request.FILES)
         if form.is_valid():
             uploaded_file = request.FILES['document']
-            
+
             # Get the latest admin paragraph
             admin_paragraph = AdminInput.objects.last().paragraph
 
@@ -538,9 +545,9 @@ def user_upload(request):
             admin_similarity_scores = []
             admin_paragraph_list = []
 
-            # Compare the similarity of paragraphs based on sentiment analysis
+            # Compare the similarity of paragraphs based on sentiment analysis using VADER
             for admin_paragraph, uploaded_paragraph in zip(admin_paragraphs, uploaded_text_preview.split('\n')):
-                similarity_score = compare_paragraphs(admin_paragraph, uploaded_paragraph)
+                similarity_score = analyze_sentiment_vader(admin_paragraph, uploaded_paragraph)
                 admin_similarity_scores.append(round(similarity_score, 2))
                 admin_paragraph_list.append(admin_paragraph)
 
@@ -563,10 +570,10 @@ def user_upload(request):
             file_extension = uploaded_file.name.split('.')[-1]
 
             return render(request, 'result.html', {'average_similarity_score': average_similarity_score,
-                                                    'uploaded_file_obj': uploaded_file_obj,
-                                                    'uploaded_text_preview': uploaded_text_preview,
-                                                    'admin_data': admin_data,
-                                                    'file_extension': file_extension,})
+                                                   'uploaded_file_obj': uploaded_file_obj,
+                                                   'uploaded_text_preview': uploaded_text_preview,
+                                                   'admin_data': admin_data,
+                                                   'file_extension': file_extension, })
 
     else:
         form = DocumentForm()
