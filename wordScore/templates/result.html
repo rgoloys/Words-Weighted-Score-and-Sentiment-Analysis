@@ -56,13 +56,14 @@
 
     .highlight {
         cursor: pointer; /* Change cursor to pointer when hovering */
-        background-color: #F0B84D;
-        color: white;
+        background-color: #FEF9E7;
+        color: #7D6608;
+        cursor: default;
     }
-    .highlight:hover {
+    /*.highlight:hover {
         background-color: #F9E79F;
         color: #7D6608;
-    }
+    }*/
     #navbar button{
         font-weight: 600;
         color: #FFFF;
@@ -87,7 +88,7 @@
         <nav id="navbar" class="navbar order-last order-lg-0">
             <ul>
                 <li>
-                    <button onclick="goBack()" class="nav-link scrollto active">Go Back</button>
+                    <a href="{% url 'test' %}">Go Back</a>
                 </li>
             </ul>
             <i class="bi bi-list mobile-nav-toggle"></i>
