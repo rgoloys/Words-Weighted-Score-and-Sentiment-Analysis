@@ -141,7 +141,7 @@
                                                     <span style="color:red;">{{ file_entry.overall_total }}</span>
                                                 {% endif %}</td>
                                             <td  style="width: 90px; padding: 0; padding-right: 0px;">
-                                                <form action="{% url 'move_file' file_entry.id %}" method="post">
+                                                <form action="{% url 'move_fileKey' file_entry.id %}" method="post">
                                                     {% csrf_token %}
                                                     <button type="submit" style="font-size: 12px;">Delete</button>
                                                 </form>
