@@ -39,7 +39,7 @@
 <header id="header" class="fixed-top ">
     <div class="container d-flex align-items-center justify-content-lg-between">
 
-        <h1 class="me-auto "><a href="#">Keyword Scan<span>.</span></a></h1>
+        <h1 class="logo me-auto me-lg-0"><a href="#">Keyword Scan<span>.</span></a></h1>
         <!-- Uncomment below if you prefer to use an image logo -->
         <!-- <a href="index.html" class="logo me-auto me-lg-0"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
 
@@ -78,13 +78,13 @@
 
                 </div>
             </div>-->
-            <div class="col-xl-2 col-md-4" style="width:68%; height: 100; padding:0;">
+            <div class="col-xl-2 col-md-4" style="width:68%; height: auto; padding:0;">
                 <div class="icon-box">
                     <i class="ri-calendar-todo-line"></i>
                     <h3><a href="#">{{ file_name }}</a></h3>
 
                     {% if preview_content %}
-                    <div class="preview" style="height: 550px; overflow-y:scroll; margin-top: 20px; color: #B3B6B7;">
+                    <div class="preview">
                         <div class="overplow">
                             {{ preview_content|safe }}
                         </div>
@@ -93,58 +93,64 @@
 
                 </div>
             </div>
-            <div class="col-xl-2 col-md-4" style="width:28%; height: 700px; padding:0;">
+            <div class="col-xl-2 col-md-4" style="width:28%; height: auto; padding:0;">
                 <div class="icon-box" style="padding: 1.5%; margin:0; display: inline-block;">
-                    <!-- i class="ri-bar-chart-box-line"></i>-->
-                    <h6><a href="#">Keywords List</a></h6>
-                    <div class="table1">
-                        
-                        <table id="customers">
-                            <tr>
-                                <th>Keyword</th>
-                                <th>Score</th>
-                                <th>Date Added</th>
-                            </tr>
-                            {% for keyword in keywords %}
-                            <tr>
-                                <td style="background-color:{{ keyword.color_code }}; color: #000000;">{{ keyword.keywords }}
-                                </td>
-                                <td>{{ keyword.score }}</td>
-                                <td>{{ keyword.date_added }}</td>
-                            </tr>
-                            {% endfor %}
-                        </table>
-                    </div>
+                    <div class="container" data-aos="fade-up"  style="margin-top: 12px; padding-top:0;">
+                        <div class="content"  style="margin-top: 0; padding-top:0;">
+                            <div class="count-box" style="margin-top: 0; padding-top:0;">
+                                <!-- i class="ri-bar-chart-box-line"></i>-->
+                                <h6><a href="#">Keywords List</a></h6>
+                                <div class="table1">
+                                    <table id="customers">
+                                        <tr>
+                                            <th>Keyword</th>
+                                            <th>Score</th>
+                                            <th>Date Added</th>
+                                        </tr>
+                                        {% for keyword in keywords %}
+                                        <tr>
+                                            <td style="background-color:{{ keyword.color_code }}; color: #000000;">{{ keyword.keywords }}
+                                            </td>
+                                            <td>{{ keyword.score }}</td>
+                                            <td>{{ keyword.date_added }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </table>
+                                </div>
 
-                    <h6  style="margin-top:12px;"><a href="#">Summary of Scanned Keyword</a></h6>
+                                <h6  style="margin-top:12px;"><a href="#">Summary of Scanned Keyword</a></h6>
 
-                    <div class="table2">
-                        <table id="customers">
-                            <tr>
-                                <th>Keyword</th>
-                                <th>Count</th>
-                                <th>Score</th>
-                                <th>Total</th>
-                            </tr>
-                            {% for keyword, data in keyword_count.items %}
-                            <tr>
-                                <td><a href="#{{ keyword }}">{{ keyword }}</a></td>
-                                <td>{{ data.count }}</td>
-                                <td>{{ data.score }}</td>
-                                <td>{{ data.total }}</td>
-                            </tr>
-                            {% endfor %}
-                            <tr>
-                                <th colspan="2">Overall Score:</th>
-                                <th colspan="2">{{ overall_total }}</th>
-                            </tr>
-                            <tr>
-                                {% for score in accept_scores %}
-                                <th colspan="2">Accepted Score:</th>
-                                <th colspan="2">{{ score.score }}</th>
-                                {% endfor %}
-                            </tr>
-                        </table>
+                                <div class="table2">
+                                    <table id="customers">
+                                        <tr>
+                                            <th>Keyword</th>
+                                            <th>Count</th>
+                                            <th>Score</th>
+                                            <th>Total</th>
+                                        </tr>
+                                        {% for keyword, data in keyword_count.items %}
+                                        <tr>
+                                                        <td><a href="#{{ keyword }}">{{ keyword }}</a></td>
+                                                        <td><span data-purecounter-start="0" data-purecounter-end="{{ data.count }}" data-purecounter-duration="2" class="purecounter"></span></td>
+                                                        <td><span data-purecounter-start="0" data-purecounter-end="{{ data.score }}" data-purecounter-duration="2" class="purecounter"></span></td>
+                                                        <td><span data-purecounter-start="0" data-purecounter-end="{{ data.total }}" data-purecounter-duration="2" class="purecounter"></span></td>
+
+                                        </tr>
+                                        {% endfor %}
+                                        <tr>
+                                            <th colspan="2">Overall Score:</th>
+                                            <th colspan="2"><span data-purecounter-start="0" data-purecounter-end="{{ overall_total }}" data-purecounter-duration="2" class="purecounter"></span></th>
+                                        </tr>
+                                        <tr>
+                                            {% for score in accept_scores %}
+                                            <th colspan="2">Accepted Score:</th>
+                                            <th colspan="2"><span data-purecounter-start="0" data-purecounter-end="{{ score.score }}" data-purecounter-duration="2" class="purecounter"></span></th>
+                                            {% endfor %}
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div><!-- End .content-->
                     </div>
                     <tr>
                         {% if score_description == "Score Passed" %}
@@ -157,20 +163,20 @@
                         </th>
                         {% endif %}
                     </tr>
-
-
                 </div>
             </div>
         </div>
-
     </div>
     {% else %}
-    <div class="bg-img">
-        <img src="/templates/logo.png">
-    </div>
-
+        <div class="bg-img">
+            <img src="/templates/logo.png">
+        </div>
     {% endif %}
 </section><!-- End Hero -->
+
+    
+
+    
 
 
 <div id="preloader"></div>
@@ -193,9 +199,15 @@
 </html>
 
 <style>
+.preview .overplow{
+    max-height: 550px; 
+    overflow-y: auto; 
+    margin-top: 20px; 
+    color: #B3B6B7;
+}
 .table1, .table2{
-    height: 300px;
-    overflow-y: scroll;
+    max-height: 300px;
+    overflow-y: auto;
 }
 .table2 #customers{
     cursor: pointer;

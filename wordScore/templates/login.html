@@ -37,6 +37,7 @@
 <style>
     form{
         margin-top: 20px;
+        color: #ffff;
     }
     form label, .signup-link p{
         color: #D0D3D4;
@@ -62,6 +63,7 @@
     }
     form input{
         background-color: transparent;
+        color: #ffff;
     }
     .btn-google p{
         color: #FCC250;
@@ -74,7 +76,7 @@
 <header id="header" class="fixed-top ">
     <div class="container d-flex align-items-center justify-content-lg-between">
 
-        <h1 class="me-auto"><a href="#">LogIn<span>.</span></a></h1>
+        <h1 class="logo me-auto me-lg-0"><a href="#">LogIn<span>.</span></a></h1>
         <!-- Uncomment below if you prefer to use an image logo -->
         <!-- <a href="index.html" class="logo me-auto me-lg-0"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
 
@@ -114,7 +116,7 @@
                     {% load socialaccount %}
                     <!-- Inside your form or wherever you want the Google icon -->
                     <a href="{% provider_login_url 'google' %}?next=/" class="btn btn-google">
-                        <i class="bi bi-google"></i> <p>Log in with Google</p>
+                        <i class="bi bi-google"></i> <p style="color: #ffff;">Log in with Google</p>
                     </a>
 
                 </div>

@@ -49,9 +49,6 @@ def test(request):
 
     return render(request, 'test.html', {'keywords': keywords, 'accept_scores': accept_scores})
 
-def AboutUs(request):
-     return render(request, 'AboutUs.html')
-
 @login_required
 def Profile(request):
     if request.method == 'POST':
