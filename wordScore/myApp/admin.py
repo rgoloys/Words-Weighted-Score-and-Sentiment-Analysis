@@ -54,6 +54,8 @@ class FileKeywordType(admin.SimpleListFilter):
 class UploadedFileAdmin(admin.ModelAdmin):
     list_display = ('user', 'document', 'similarity_score', 'date_added')
     list_filter = (UserFilter, ("date_added", DateRangeFilterBuilder(title=_("Filter by date"))),)
+    UploadedFile._meta.verbose_name = "Sentiment Files Report"
+    UploadedFile._meta.verbose_name_plural = "Sentiment Files Report"
 
 #Filteration for FileKeywordCount Uploaded file
 @admin.register(FileKeywordCount)
@@ -68,20 +70,26 @@ class FileKeywordCountAdmin(admin.ModelAdmin):
             overall_total += data['total']
         return overall_total
     calculate_overall_total.short_description = 'Overall Score'
-
+    
+    FileKeywordCount._meta.verbose_name = "File Keywords Report"
+    FileKeywordCount._meta.verbose_name_plural = "File Keywords Report"
 
 #Funtion CRUD for Keyword, AcceptScore, AdminParagraph
 class KeyWordAdmin(admin.ModelAdmin):
     list_display = ('keywords', 'score', 'admin_user', 'date_added', 'color_code')  # Include 'score' in the list display
+    KeyWord._meta.verbose_name = "Add Keywords"
+    KeyWord._meta.verbose_name_plural = "Add Keywords"
 
 class AcceptScoreAdmin(admin.ModelAdmin):
     list_display = ('score', 'admin_user', 'date_added')  # Specify fields to display in the list view
+    AcceptScore._meta.verbose_name = "Add Accepted Score"
+    AcceptScore._meta.verbose_name_plural = "Add Accepted Score"
 
 class AdminInputAdmin(admin.ModelAdmin):
     list_display = ('paragraph', 'color')  # Include 'score' in the list display
-
+    AdminInput._meta.verbose_name = "Add Sentiment Paragraphs"
+    AdminInput._meta.verbose_name_plural = "Add Sentiment Paragraphs"
 
 admin.site.register(KeyWord, KeyWordAdmin)
 admin.site.register(AcceptScore, AcceptScoreAdmin)
 admin.site.register(AdminInput, AdminInputAdmin)
-
