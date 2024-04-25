@@ -12,7 +12,7 @@ urlpatterns = [
 
     path('keyword-scan/', views.keyword_scan, name='keyword_scan'),
     path('user-files/', views.user_files, name='user_files'),
-    
+    path('AboutUs/', views.AboutUs, name="AboutUs"),
     path('file-details/<int:file_id>/', views.file_details, name='file_details'),
     path('back/', back_or_default, name='back'),
     path('senti/', views.user_upload, name='user_upload'),

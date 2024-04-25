@@ -1,30 +1,20 @@
 # views.py
 from django.contrib.auth import authenticate, login, logout
-from .forms import UserCreationForm, LoginForm
+from .forms import UserCreationForm, LoginForm, FileUploadForm, DocumentForm, UserEditForm
 from difflib import SequenceMatcher
 from django.shortcuts import render, redirect, HttpResponse
 from django.contrib.auth.decorators import login_required
-from .models import FileKeywordCount
-import os
-import math
-import PyPDF2
+from .models import FileKeywordCount, AdminInput, UploadedFile, KeyWord, AcceptScore
 from docx import Document
 from openpyxl import load_workbook
-from .forms import FileUploadForm
 from .utils import extract_pdf_preview, extract_docx_preview, extract_xlsx_preview
-from .models import AcceptScore
-from .models import KeyWord
-from .forms import DocumentForm
-from .models import AdminInput, UploadedFile
 from textblob import TextBlob
 import docx
 import openpyxl
 import PyPDF2
-import nltk
-nltk.download('vader_lexicon')
 from PyPDF2 import PdfReader
+import os
 import io
-from docx import Document
 import re
 import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
@@ -32,15 +22,14 @@ from django.utils.safestring import mark_safe
 from django.utils import timezone
 from django.urls import reverse
 from django.conf import settings
+from django.contrib import messages
 # Initialize the sentiment analyzer
 nltk.download('vader_lexicon')
 sid = SentimentIntensityAnalyzer()
 
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from .forms import UserEditForm
 
 
+# Home page
 def test(request):
     keywords = KeyWord.objects.all()
 
@@ -68,7 +57,7 @@ def Profile(request):
         form = UserEditForm(instance=request.user)
     return render(request, 'Profile.html', {'form': form})
 
-# Home page
+
 def index(request):
     # Get all keywords from the database
     keywords = KeyWord.objects.all()
@@ -78,7 +67,8 @@ def index(request):
 
     return render(request, 'index.html', {'keywords': keywords, 'accept_scores': accept_scores})
 
-
+def AboutUs(request):
+     return render(request, 'AboutUs.html')
 
 # signup page
 def user_signup(request):
@@ -479,18 +469,67 @@ def back_or_default(request, default_url='/'):
 ##### SENTIMENT FUNCTION #####
 
 def analyze_sentiment(text1, text2):
-    # Analyze sentiment using TextBlob
+        # Analyze sentiment using NLTK's SentimentIntensityAnalyzer
+    #scores1 = sid.polarity_scores(text1)
+    #scores2 = sid.polarity_scores(text2)
+    
+        # Get the compound scores
+    #compound_score1 = scores1['compound']
+    #compound_score2 = scores2['compound']
+    
+        # Calculate the absolute difference between the compound scores
+    #diff = abs(compound_score1 - compound_score2)
+    
+        # Map the difference to a score between 0 and 100
+    #similarity_score = (1 - diff) * 50
+    
+        # Ensure the score is within the valid range [0, 100]
+    #similarity_score = max(0, min(100, similarity_score))
+    
+
+
+
+
+        # Analyze sentiment using TextBlob
     sentiment1 = TextBlob(text1).sentiment.polarity
     sentiment2 = TextBlob(text2).sentiment.polarity
-
-    # Calculate the absolute difference between the sentiment polarity scores
+    
+        # Calculate the absolute difference between the sentiment polarity scores
     diff = abs(sentiment1 - sentiment2)
 
-    # Map the difference to a score between 0 and 100
-    similarity_score = 100 - (diff * 100)
+        # Map the difference to a score between 0 and 100
+        #similarity_score = 100 - (diff * 100)
+    similarity_score = (1 - diff) * 50
 
-    # Ensure the score is within the valid range [0, 100]
+        # Ensure the score is within the valid range [0, 100]
     similarity_score = max(0, min(100, similarity_score))
+
+
+
+
+            # Analyze sentiment using VADER
+        # Initialize VADER
+    #sid = SentimentIntensityAnalyzer()
+
+        # Analyze sentiment of text1 and text2
+    #scores1 = sid.polarity_scores(text1)
+    #scores2 = sid.polarity_scores(text2)
+
+        # Get compound scores
+    #compound_score1 = scores1['compound']
+    #compound_score2 = scores2['compound']
+
+        # Calculate the absolute difference between the compound scores
+    #diff = abs(compound_score1 - compound_score2)
+
+        # Map the difference to a score between 0 and 100
+        #similarity_score = 100 - (diff * 50)  # VADER compound score ranges from -1 to 1, so we multiply by 50
+    #similarity_score = (1 - diff) * 50
+    
+        # Ensure the score is within the valid range [0, 100]
+    #similarity_score = max(0, min(100, similarity_score))
+
+
 
     # Return the similarity score
     return similarity_score
