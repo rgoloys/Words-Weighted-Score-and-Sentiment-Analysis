@@ -470,39 +470,40 @@ def back_or_default(request, default_url='/'):
 
 def analyze_sentiment(text1, text2):
         # Analyze sentiment using NLTK's SentimentIntensityAnalyzer
-    #scores1 = sid.polarity_scores(text1)
-    #scores2 = sid.polarity_scores(text2)
+    scores1 = sid.polarity_scores(text1)
+    scores2 = sid.polarity_scores(text2)
     
         # Get the compound scores
-    #compound_score1 = scores1['compound']
-    #compound_score2 = scores2['compound']
+    compound_score1 = scores1['compound']
+    compound_score2 = scores2['compound']
     
         # Calculate the absolute difference between the compound scores
-    #diff = abs(compound_score1 - compound_score2)
+    diff = abs(compound_score1 - compound_score2)
     
         # Map the difference to a score between 0 and 100
-    #similarity_score = (1 - diff) * 50
+    #similarity_score = 100 - (diff * 100)
+    similarity_score = (1 - diff) * 100 #50
     
         # Ensure the score is within the valid range [0, 100]
-    #similarity_score = max(0, min(100, similarity_score))
+    similarity_score = max(0, min(100, similarity_score))
     
 
 
 
 
         # Analyze sentiment using TextBlob
-    sentiment1 = TextBlob(text1).sentiment.polarity
-    sentiment2 = TextBlob(text2).sentiment.polarity
+    #sentiment1 = TextBlob(text1).sentiment.polarity
+    #sentiment2 = TextBlob(text2).sentiment.polarity
     
         # Calculate the absolute difference between the sentiment polarity scores
-    diff = abs(sentiment1 - sentiment2)
+    #diff = abs(sentiment1 - sentiment2)
 
         # Map the difference to a score between 0 and 100
         #similarity_score = 100 - (diff * 100)
-    similarity_score = (1 - diff) * 50
+    #similarity_score = (1 - diff) * 50
 
         # Ensure the score is within the valid range [0, 100]
-    similarity_score = max(0, min(100, similarity_score))
+    #similarity_score = max(0, min(100, similarity_score))
 
 
 
@@ -633,7 +634,7 @@ def create_preview_with_highlights(file, admin_paragraph):
         for paragraph in doc.paragraphs:
             # Check similarity with admin paragraph
             similarity_score = compare_paragraphs(admin_paragraph, paragraph.text.strip())
-            if similarity_score > 85:  # Example threshold, adjust as needed
+            if similarity_score > 90:  # Example threshold, adjust as needed
                 preview_text += '<span class="highlight">{}</span>'.format(paragraph.text.strip()) + '\n'
             else:
                 preview_text += paragraph.text.strip() + '\n'
@@ -647,7 +648,7 @@ def create_preview_with_highlights(file, admin_paragraph):
             for line in lines:
                 # Check similarity with admin paragraph
                 similarity_score = compare_paragraphs(admin_paragraph, line.strip())
-                if similarity_score > 99:  # Example threshold, adjust as needed
+                if similarity_score > 90:  # Example threshold, adjust as needed
                     preview_text += "<span class='highlight'>{}</span>".format(line.strip()) + '\n'
                 else:
                     preview_text += line.strip() + '\n'
@@ -661,7 +662,7 @@ def create_preview_with_highlights(file, admin_paragraph):
                 for cell in row:
                     # Check similarity with admin paragraph
                     similarity_score = compare_paragraphs(admin_paragraph, str(cell.value))
-                    if similarity_score > 99:  # Example threshold, adjust as needed
+                    if similarity_score > 90:  # Example threshold, adjust as needed
                         preview_text += "<span class='highlight'>{}</span>".format(
                             str(cell.value)) + " "
                     else:
