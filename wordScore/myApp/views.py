@@ -482,7 +482,7 @@ def analyze_sentiment(text1, text2):
     
         # Map the difference to a score between 0 and 100
     #similarity_score = 100 - (diff * 100)
-    similarity_score = (1 - diff) * 100 #50
+    similarity_score = (1 - diff) * 50 #50     
     
         # Ensure the score is within the valid range [0, 100]
     similarity_score = max(0, min(100, similarity_score))
@@ -634,7 +634,7 @@ def create_preview_with_highlights(file, admin_paragraph):
         for paragraph in doc.paragraphs:
             # Check similarity with admin paragraph
             similarity_score = compare_paragraphs(admin_paragraph, paragraph.text.strip())
-            if similarity_score > 90:  # Example threshold, adjust as needed
+            if similarity_score > 45:  # Example threshold, adjust as needed
                 preview_text += '<span class="highlight">{}</span>'.format(paragraph.text.strip()) + '\n'
             else:
                 preview_text += paragraph.text.strip() + '\n'
@@ -648,7 +648,7 @@ def create_preview_with_highlights(file, admin_paragraph):
             for line in lines:
                 # Check similarity with admin paragraph
                 similarity_score = compare_paragraphs(admin_paragraph, line.strip())
-                if similarity_score > 90:  # Example threshold, adjust as needed
+                if similarity_score > 45:  # Example threshold, adjust as needed
                     preview_text += "<span class='highlight'>{}</span>".format(line.strip()) + '\n'
                 else:
                     preview_text += line.strip() + '\n'
@@ -662,7 +662,7 @@ def create_preview_with_highlights(file, admin_paragraph):
                 for cell in row:
                     # Check similarity with admin paragraph
                     similarity_score = compare_paragraphs(admin_paragraph, str(cell.value))
-                    if similarity_score > 90:  # Example threshold, adjust as needed
+                    if similarity_score > 45:  # Example threshold, adjust as needed
                         preview_text += "<span class='highlight'>{}</span>".format(
                             str(cell.value)) + " "
                     else:

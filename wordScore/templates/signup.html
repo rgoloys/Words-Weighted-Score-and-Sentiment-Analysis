@@ -112,14 +112,15 @@
                         {{ form.password1 }}
                         <label for="id_password2">Confirm Password:</label>
                         {{ form.password2 }}
+
                         {% for field in form %}
-                        {% if field.errors %}
-                        <div class="error-message" style="color:#FCC250;">
-                            {% for error in field.errors %}
-                            <p>{{ error }}</p>
-                            {% endfor %}
-                        </div>
-                        {% endif %}
+                            {% if field.errors %}
+                            <div class="error-message" style="color:#FCC250;">
+                                {% for error in field.errors %}
+                                <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
                         {% endfor %}
 
                         <button type="submit">Signup</button>
